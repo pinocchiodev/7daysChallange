@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7 Days to Die — เครื่องสุ่มชาเลนจ์ทีม</title>
+<meta name="description" content="สุ่มสายอัปสกิล อาวุธหลัก และหน้าที่ในบ้าน สำหรับทีม 4-5 คนใน 7 Days to Die">
+<style>
+:root{
+  --bg:#14110e; --panel:#1e1914; --panel2:#272019; --line:#3a3027;
+  --rust:#c4622d; --rust2:#e08a4a; --text:#ebe3d6; --mute:#9a8d7c;
+  --red:#b8372b; --ok:#7fa650;
+  --perc:#d4a93a; --str:#c4622d; --fort:#6f9a52; --agi:#4a9fbf; --int:#9a6fc4;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans Thai","Sarabun",system-ui,sans-serif;line-height:1.5}
+body{background:radial-gradient(1200px 500px at 50% -10%,#2b1f16 0%,transparent 70%),var(--bg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+header{text-align:center;padding:18px 0 8px}
+h1{font-family:Impact,"Arial Narrow Bold","Noto Sans Thai",sans-serif;letter-spacing:.04em;font-size:clamp(28px,6vw,48px);margin:0;color:var(--rust2);text-shadow:0 2px 0 #000}
+h1 small{display:block;font-size:.4em;color:var(--mute);letter-spacing:.2em;font-family:inherit;margin-top:4px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0}
+.panel h2{margin:0 0 10px;font-size:15px;color:var(--rust2);letter-spacing:.05em;text-transform:uppercase}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:var(--panel2);padding:8px 18px}
+.seg button.on{background:var(--rust);color:#fff}
+button,input[type=text],textarea,select{font:inherit;color:var(--text)}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;transition:.12s}
+button:hover{border-color:var(--rust);}
+button:active{transform:translateY(1px)}
+button.primary{background:linear-gradient(#d4723a,#a9501f);border-color:#e08a4a;color:#fff;font-weight:700;font-size:18px;padding:12px 28px;letter-spacing:.03em}
+button.primary:hover{filter:brightness(1.1)}
+button.ghost{background:transparent}
+button.danger:hover{border-color:var(--red);color:#ff8a7e}
+button.sm{padding:4px 9px;font-size:13px}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=text]{background:#120f0c;border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--rust);outline-offset:0}
+.names{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;width:100%}
+label.chk{display:inline-flex;gap:6px;align-items:center;cursor:pointer;color:var(--mute);font-size:14px}
+.stepper{display:inline-flex;align-items:center;gap:6px}
+.stepper span{min-width:20px;text-align:center;font-weight:700}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:6px}
+.card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c,var(--line));border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative;min-height:290px}
+.card.locked{box-shadow:0 0 0 1px var(--ok) inset}
+.card .who{font-weight:700;font-size:18px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.card .who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:11px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.attr{font-family:Impact,sans-serif;font-size:24px;letter-spacing:.03em;color:var(--c)}
+.attr small{display:block;font-family:"Segoe UI","Noto Sans Thai",sans-serif;font-size:12px;color:var(--mute);letter-spacing:0}
+.val{font-size:16px;font-weight:600;min-height:24px}
+.sub{font-size:12px;color:var(--mute)}
+.block{background:#120f0c;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.block .top{display:flex;justify-content:space-between;align-items:center}
+.card.spinning .val,.card.spinning .attr{filter:blur(1.2px);opacity:.8}
+.empty{text-align:center;color:var(--mute);padding:40px 10px;border:1px dashed var(--line);border-radius:10px}
+
+.rules{display:grid;gap:8px}
+.rule{background:#2a1512;border:1px solid #5a2620;border-left:4px solid var(--red);border-radius:8px;padding:10px 12px}
+.rule b{color:#ff9d90}
+.rule i{font-style:normal;display:block;color:var(--mute);font-size:13px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+
+.hist{display:grid;gap:10px}
+.h{background:#120f0c;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.h .meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--mute);font-size:13px;margin-bottom:6px}
+.h table{width:100%;border-collapse:collapse;font-size:14px}
+.h td{padding:3px 6px;border-top:1px solid #2a2219}
+.h td:first-child{font-weight:700;white-space:nowrap}
+.h .rl{color:#ff9d90;font-size:13px;margin-top:6px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--rust);border-radius:12px;max-width:760px;width:calc(100% - 24px);padding:16px}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog h3{margin:0 0 6px;color:var(--rust2)}
+.ed{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:10px 0}
+.ed label{font-size:13px;color:var(--mute);display:block;margin-bottom:3px}
+textarea{width:100%;min-height:120px;background:#120f0c;border:1px solid var(--line);border-radius:8px;padding:8px;resize:vertical;font-size:13px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);background:#000;border:1px solid var(--rust);padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:.25s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%)}
+footer{text-align:center;color:var(--mute);font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>7 DAYS TO DIE <small>เครื่องสุ่มชาเลนจ์ทีม · สาย / อาวุธ / หน้าที่</small></h1>
+  </header>
+
+  <section class="panel">
+    <h2>ตั้งค่าทีม</h2>
+    <div class="row" style="margin-bottom:10px">
+      <span>จำนวนผู้เล่น</span>
+      <div class="seg" id="countSeg">
+        <button data-n="4">4 คน</button><button data-n="5">5 คน</button>
+      </div>
+      <span style="margin-left:12px">กติกา Challenge</span>
+      <div class="stepper">
+        <button class="sm" id="rMinus">−</button><span id="rCount">1</span><button class="sm" id="rPlus">+</button>
+      </div>
+      <label class="chk" style="margin-left:12px"><input type="checkbox" id="weaponByAttr"> อาวุธตามสาย</label>
+    </div>
+    <div class="names" id="names"></div>
+  </section>
+
+  <div class="bar">
+    <button class="primary" id="spinAll">🎲 สุ่มทั้งทีม</button>
+    <button id="copyBtn">📋 คัดลอกผล</button>
+    <button id="saveBtn">💾 บันทึกลงประวัติ</button>
+    <button id="settingsBtn">⚙️ แก้รายการ</button>
+  </div>
+
+  <section id="result"></section>
+
+  <section class="panel" id="rulesPanel" style="display:none">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <h2 style="margin:0">กติกา Challenge ของทีม</h2>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="lockRules"> ล็อคกติกา</label>
+        <button class="sm" id="rerollRules">🎲 สุ่มกติกาใหม่</button>
+      </div>
+    </div>
+    <div class="rules" id="rules"></div>
+  </section>
+
+  <section class="panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <h2 style="margin:0">ประวัติการสุ่ม <span id="histCount" style="color:var(--mute)"></span></h2>
+      <div class="row">
+        <button class="sm" id="exportBtn">⬇ Export JSON</button>
+        <button class="sm" id="importBtn">⬆ Import JSON</button>
+        <button class="sm danger" id="clearHist">ล้างประวัติ</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    <div class="hist" id="hist"></div>
+  </section>
+
+  <footer>ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ (localStorage) · ใช้ Export/Import เพื่อสำรองหรือย้ายเครื่อง</footer>
+</div>
+
+<dialog id="dlg">
+  <h3>แก้รายการสุ่ม</h3>
+  <div class="sub">หนึ่งบรรทัดต่อหนึ่งรายการ · บันทึกแล้วใช้ได้ทันที</div>
+  <div class="ed" id="ed"></div>
+  <div class="row" style="justify-content:flex-end">
+    <button class="danger" id="resetLists">คืนค่าเริ่มต้น</button>
+    <button id="cancelLists">ยกเลิก</button>
+    <button class="primary" style="font-size:15px;padding:8px 20px" id="saveLists">บันทึก</button>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- ข้อมูลเริ่มต้น ---------- */
+const ATTRS = {
+  PER:{ th:'การรับรู้',  en:'PERCEPTION', color:'var(--perc)', hint:'ยิงไกล · ลูท · ระเบิด' },
+  STR:{ th:'พละกำลัง',  en:'STRENGTH',   color:'var(--str)',  hint:'ตี · ขุด · แบกของ · ปืนหนัก' },
+  FOR:{ th:'ความทรหด',  en:'FORTITUDE',  color:'var(--fort)', hint:'ถึก · ฟื้นตัว · ตะลุยประชิด' },
+  AGI:{ th:'ความคล่องแคล่ว', en:'AGILITY', color:'var(--agi)', hint:'ซุ่ม · เร็ว · ปืนเล็ก/ธนู' },
+  INT:{ th:'สติปัญญา',  en:'INTELLECT',  color:'var(--int)',  hint:'คราฟต์ · เทคโนโลยี · กับดัก' }
+};
+const ATTR_KEYS = Object.keys(ATTRS);
+
+const DEFAULT_LISTS = {
+  weapons:{
+    PER:['ปืนไรเฟิลซุ่มยิง (Sniper/Hunting Rifle)','ปืนไรเฟิลเลเวอร์แอคชัน','ระเบิดและวัตถุระเบิด','หน้าไม้ (Crossbow)'],
+    STR:['กระบองและค้อนสเลดจ์','ปืนลูกซอง (Shotgun)','ปืนกล (AK-47 / M60)','ขวานดับเพลิง / ขวานรบ'],
+    FOR:['มีดพร้า (Machete)','หมัดเหล็ก / Knuckles','ปืนลูกซองลำกล้องสั้น ยิงชิด','ไม้กระบองหนามประชิด'],
+    AGI:['ธนู (Bow / Compound)','ปืนพก / ปืนลูกโม่','มีดล่าสัตว์ (Knife)','หอก (Spear)'],
+    INT:['ป้อมปืน/โดรนอัตโนมัติ','กระบองไฟฟ้า (Stun Baton)','กับดักและทุ่นระเบิด','ปืน SMG คราฟต์เอง']
+  },
+  roles:[
+    'ช่างสร้างป้อม · ซ่อมกำแพงและกับดัก',
+    'เชฟและเกษตรกร · ดูแลอาหาร น้ำ ฟาร์ม',
+    'ผู้ดูแลคลัง · จัดระเบียบเสบียงทั้งหมด',
+    'หมอประจำบ้าน · ผลิตยาและผ้าพันแผล',
+    'ช่างกล · ผลิตกระสุน ซ่อมอาวุธ',
+    'นักขุดแร่ · หาเหล็ก ถ่าน หิน น้ำมัน',
+    'หัวหน้านำทางสำรวจ · ลูทและเคลียร์ POI',
+    'ยามหอสังเกต · เฝ้าบ้านช่วงกลางคืน',
+    'วิศวกรไฟฟ้า · ดูแลไฟ แบตเตอรี่ ป้อม',
+    'พ่อค้า · เทรดกับเทรดเดอร์ ดูแลเงิน'
+  ],
+  rules:[
+    ['ห้ามใช้ปืนทุกชนิดในช่วง 7 วันแรก','ทุกคนต้องพึ่งอาวุธระยะประชิดหรือธนู'],
+    ['ห้ามนอนเตียง/ตั้ง Bedroll นอกบ้านหลัก','เสียชีวิตแล้วต้องวิ่งกลับบ้านเท่านั้น'],
+    ['ห้ามกินอาหารสำเร็จรูปกระป๋อง','ต้องทำอาหารเองเท่านั้น'],
+    ['ห้ามใช้ยานพาหนะ','เดินทางด้วยเท้าเท่านั้น'],
+    ['ห้ามเปิดแผนที่ตอนสำรวจ','ใช้เข็มทิศและจำทางเอง'],
+    ['ห้ามสร้างกำแพงคอนกรีต/เหล็กก่อนคืนเลือดดวงที่ 3','ใช้ไม้และกับดักเท่านั้น'],
+    ['ทุกคนต้องวิ่งกลับบ้านก่อน 18:00 ทุกวัน','ใครมาช้าต้องเป็นยามคืนนั้น'],
+    ['ห้ามตั้งฐานในบ้านที่มีอยู่แล้ว','ต้องสร้างหรือดัดแปลงเอง'],
+    ['ห้ามใช้โมดูล/สกิลโกงบุคคลเดียว','ใครได้ของแรร์ต้องแบ่งให้ทั้งทีม'],
+    ['ห้ามคราฟต์ไอเทมที่ไม่ใช่ของสายตัวเอง','ต้องขอเพื่อนที่เป็นสายนั้นคราฟต์ให้'],
+    ['คนที่ตายต้องเลี้ยงข้าวทีม','ทำอาหารหรือส่งเสบียงให้ทุกคนหนึ่งชุด'],
+    ['ห้ามเก็บกระสุนเกิน 100 นัดต่อคน','เกินต้องส่งเข้าคลังกลาง'],
+    ['ห้ามใช้ชุดเกราะหนัก','ใส่ได้เฉพาะชุดเบาหรือชุดเริ่มต้น'],
+    ['เดินสำรวจตอนกลางคืนเท่านั้น','กลางวันให้ทำงานในบ้าน'],
+    ['ห้ามใช้ขวดน้ำสะอาดที่เจอจากลูท','ต้องต้มกรองน้ำเอง'],
+    ['ห้ามใช้ Quest จากเทรดเดอร์ช่วง 7 วันแรก','เน้นเก็บของและสร้างเอง'],
+    ['ทุกคนต้องปักธงมาร์กตำแหน่งตัวเองทุกครั้งที่ออกนอกบ้าน','ใครลืมต้องเป็นคนทำอาหารเย็น'],
+    ['ห้ามทิ้งบ้านเปล่าแม้แต่นาทีเดียวในคืนบลัดมูน','อย่างน้อย 2 คนต้องอยู่บ้าน']
+  ].map(([t,d])=>t+' — '+d)
+};
+
+/* ---------- storage ---------- */
+const K = {state:'7dtd_state_v1', hist:'7dtd_history_v1', lists:'7dtd_lists_v1'};
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('บันทึกไม่ได้ (พื้นที่เก็บเต็มหรือถูกบล็อก)')}};
+
+let lists = Object.assign(structuredClone(DEFAULT_LISTS), load(K.lists,{}));
+let state = Object.assign({
+  count:5, names:['ผู้เล่น 1','ผู้เล่น 2','ผู้เล่น 3','ผู้เล่น 4','ผู้เล่น 5'],
+  ruleCount:1, weaponByAttr:true, lockRules:false,
+  current:null, locks:[false,false,false,false,false]
+}, load(K.state,{}));
+let history = load(K.hist,[]);
+const persist=()=>save(K.state,state);
+
+/* ---------- random ---------- */
+const rnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
+const pick=a=>a[rnd(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+const allWeapons=()=>[...new Set(ATTR_KEYS.flatMap(k=>lists.weapons[k]||[]))];
+
+function weaponFor(attr, used){
+  const pool=state.weaponByAttr ? (lists.weapons[attr]||[]) : allWeapons();
+  let free=pool.filter(w=>!used.has(w));
+  if(!free.length) free=allWeapons().filter(w=>!used.has(w));
+  if(!free.length) free=pool.length?pool:allWeapons();
+  return pick(free);
+}
+function roleFor(used){
+  let free=lists.roles.filter(r=>!used.has(r));
+  if(!free.length) free=lists.roles;
+  return pick(free);
+}
+function pickRules(n){ return shuffle(lists.rules).slice(0,n); }
+
+/* ---------- สุ่มหลัก ---------- */
+function roll(){
+  const n=state.count;
+  const prev=state.current?.players||[];
+  const players=[];
+  const usedAttr=new Set(), usedW=new Set(), usedR=new Set();
+  // ล็อคก่อน
+  for(let i=0;i<n;i++){
+    if(state.locks[i] && prev[i]){
+      players[i]={...prev[i],name:state.names[i]};
+      usedAttr.add(prev[i].attr); usedW.add(prev[i].weapon); usedR.add(prev[i].role);
+    }
+  }
+  const freeAttrs=shuffle(ATTR_KEYS.filter(a=>!usedAttr.has(a)));
+  for(let i=0;i<n;i++){
+    if(players[i]) continue;
+    const attr=freeAttrs.pop();               // ไม่ซ้ำสายแน่นอน (5 สาย ≥ 5 คน)
+    const weapon=weaponFor(attr,usedW); usedW.add(weapon);
+    const role=roleFor(usedR); usedR.add(role);
+    players[i]={name:state.names[i],attr,weapon,role};
+  }
+  const rules = (state.lockRules && state.current) ? state.current.rules : pickRules(state.ruleCount);
+  return {players,rules};
+}
+
+function rerollField(i,field){
+  const p=state.current.players[i];
+  const others=state.current.players.filter((_,j)=>j!==i);
+  if(field==='weapon'){
+    p.weapon=weaponFor(p.attr,new Set(others.map(o=>o.weapon)));
+  }else if(field==='role'){
+    p.role=roleFor(new Set(others.map(o=>o.role)));
+  }else if(field==='attr'){
+    const used=new Set(others.map(o=>o.attr));
+    const free=ATTR_KEYS.filter(a=>!used.has(a)&&a!==p.attr);
+    if(free.length){
+      p.attr=pick(free);
+    }else{ // สลับกับคนอื่นที่ไม่ล็อค
+      const cand=state.current.players.map((_,j)=>j).filter(j=>j!==i&&!state.locks[j]);
+      if(!cand.length){toast('ไม่มีสายให้สลับ (คนอื่นล็อคอยู่)');return}
+      const j=pick(cand); [p.attr,state.current.players[j].attr]=[state.current.players[j].attr,p.attr];
+    }
+    if(state.weaponByAttr){
+      const used2=new Set(state.current.players.filter(o=>o!==p).map(o=>o.weapon));
+      if(!(lists.weapons[p.attr]||[]).includes(p.weapon)) p.weapon=weaponFor(p.attr,used2);
+    }
+  }
+  persist(); render();
+}
+
+/* ---------- render ---------- */
+function renderNames(){
+  $('names').innerHTML=Array.from({length:state.count},(_,i)=>
+    `<input type="text" maxlength="24" value="${esc(state.names[i])}" data-i="${i}" aria-label="ชื่อผู้เล่น ${i+1}" placeholder="ผู้เล่น ${i+1}">`).join('');
+}
+function cardHTML(p,i){
+  const a=ATTRS[p.attr];
+  return `<div class="card ${state.locks[i]?'locked':''}" style="--c:${a.color}" data-i="${i}">
+    <div class="who"><span>${esc(p.name||'ผู้เล่น '+(i+1))}</span>
+      <button class="sm ghost lock" data-i="${i}" title="ล็อคผลของคนนี้ ไม่ถูกสุ่มใหม่">${state.locks[i]?'🔒':'🔓'}</button></div>
+    <div class="block"><div class="top"><div class="tag">สายที่ต้องเล่น</div><button class="sm ghost rr" data-f="attr" data-i="${i}" title="สุ่มสายใหม่">🎲</button></div>
+      <div class="attr">${a.en}<small>${a.th} · ${a.hint}</small></div></div>
+    <div class="block"><div class="top"><div class="tag">อาวุธหลัก</div><button class="sm ghost rr" data-f="weapon" data-i="${i}" title="สุ่มอาวุธใหม่">🎲</button></div>
+      <div class="val">${esc(p.weapon)}</div></div>
+    <div class="block"><div class="top"><div class="tag">หน้าที่ในบ้าน</div><button class="sm ghost rr" data-f="role" data-i="${i}" title="สุ่มหน้าที่ใหม่">🎲</button></div>
+      <div class="val">${esc(p.role)}</div></div>
+  </div>`;
+}
+function render(){
+  const c=state.current;
+  if(!c){
+    $('result').innerHTML='<div class="empty">ใส่ชื่อผู้เล่น แล้วกด “สุ่มทั้งทีม” เพื่อเริ่มชาเลนจ์</div>';
+    $('rulesPanel').style.display='none';
+  }else{
+    $('result').innerHTML='<div class="cards">'+c.players.slice(0,state.count).map(cardHTML).join('')+'</div>';
+    $('rulesPanel').style.display=state.ruleCount>0||c.rules.length?'':'none';
+    $('rules').innerHTML=c.rules.length?c.rules.map(r=>{
+      const [t,d]=r.split(' — ');return `<div class="rule"><b>${esc(t)}</b>${d?`<i>${esc(d)}</i>`:''}</div>`}).join('')
+      :'<div class="sub">ไม่มีกติกาพิเศษ</div>';
+  }
+  $('rCount').textContent=state.ruleCount;
+  $('lockRules').checked=state.lockRules;
+  $('weaponByAttr').checked=state.weaponByAttr;
+  document.querySelectorAll('#countSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.n===state.count));
+  renderHistory();
+}
+const fmt=t=>new Date(t).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+function renderHistory(){
+  $('histCount').textContent=history.length?`(${history.length})`:'';
+  if(!history.length){$('hist').innerHTML='<div class="sub">ยังไม่มีประวัติ — กด “บันทึกลงประวัติ” หลังสุ่มได้ผลที่ต้องการ</div>';return}
+  $('hist').innerHTML=history.map(h=>`<div class="h">
+    <div class="meta"><span>${fmt(h.t)} · ${h.players.length} คน</span>
+      <span><button class="sm" data-act="restore" data-id="${h.id}">นำกลับมาใช้</button>
+      <button class="sm danger" data-act="del" data-id="${h.id}">ลบ</button></span></div>
+    <table>${h.players.map(p=>`<tr><td>${esc(p.name)}</td><td style="color:${ATTRS[p.attr]?.color}">${ATTRS[p.attr]?.en||esc(p.attr)}</td><td>${esc(p.weapon)}</td><td>${esc(p.role)}</td></tr>`).join('')}</table>
+    ${h.rules?.length?`<div class="rl">⚠ ${h.rules.map(esc).join(' · ')}</div>`:''}
+  </div>`).join('');
+}
+
+/* ---------- actions ---------- */
+function spin(){
+  const result=roll();
+  const cards=()=>[...document.querySelectorAll('.card')];
+  const final=result;
+  // ถ้าไม่มี card (ยังไม่เคยสุ่ม) ให้ render ก่อน
+  state.current=final; persist();
+  render();
+  // เอฟเฟกต์สไลด์
+  const cs=cards();
+  cs.forEach((c,i)=>{
+    if(state.locks[i]) return;
+    c.classList.add('spinning');
+    const vals=c.querySelectorAll('.val'), attr=c.querySelector('.attr');
+    const finalV=[...vals].map(v=>v.textContent), finalA=attr.innerHTML;
+    const t=setInterval(()=>{
+      attr.firstChild.textContent=ATTRS[pick(ATTR_KEYS)].en;
+      vals[0].textContent=pick(allWeapons());
+      vals[1].textContent=pick(lists.roles);
+    },70);
+    setTimeout(()=>{clearInterval(t);attr.innerHTML=finalA;vals.forEach((v,k)=>v.textContent=finalV[k]);c.classList.remove('spinning')},700+i*250);
+  });
+  // บันทึกประวัติอัตโนมัติ
+  addHistory(true);
+}
+function addHistory(auto){
+  const c=state.current; if(!c) return;
+  const entry={id:Date.now().toString(36)+rnd(1e4).toString(36),t:Date.now(),
+    players:c.players.slice(0,state.count).map(p=>({...p})),rules:[...c.rules]};
+  // กันบันทึกซ้ำผลเดิม
+  const sig=e=>JSON.stringify([e.players,e.rules]);
+  if(history[0]&&sig(history[0])===sig(entry)){ if(!auto)toast('ผลนี้บันทึกไว้แล้ว'); return }
+  history.unshift(entry); history=history.slice(0,200);
+  save(K.hist,history); renderHistory();
+  if(!auto)toast('บันทึกลงประวัติแล้ว');
+}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2000)}
+function resultText(){
+  const c=state.current; if(!c) return '';
+  return '🧟 7 Days to Die — ชาเลนจ์ทีม\n'+c.players.slice(0,state.count).map(p=>
+    `• ${p.name}: ${ATTRS[p.attr].en} | ${p.weapon} | ${p.role}`).join('\n')
+    +(c.rules.length?'\n\n⚠ กติกา:\n'+c.rules.map(r=>'- '+r).join('\n'):'');
+}
+
+/* ---------- events ---------- */
+$('countSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  state.count=+b.dataset.n; persist(); renderNames(); render();
+});
+$('names').addEventListener('input',e=>{
+  const i=+e.target.dataset.i; state.names[i]=e.target.value.trim()||('ผู้เล่น '+(i+1));
+  if(state.current?.players[i]) state.current.players[i].name=state.names[i];
+  persist();
+});
+$('names').addEventListener('change',()=>render());
+$('rMinus').onclick=()=>{state.ruleCount=Math.max(0,state.ruleCount-1);persist();render()};
+$('rPlus').onclick=()=>{state.ruleCount=Math.min(5,state.ruleCount+1);persist();render()};
+$('weaponByAttr').onchange=e=>{state.weaponByAttr=e.target.checked;persist()};
+$('lockRules').onchange=e=>{state.lockRules=e.target.checked;persist()};
+$('spinAll').onclick=spin;
+$('saveBtn').onclick=()=>state.current?addHistory(false):toast('ยังไม่มีผลให้บันทึก');
+$('copyBtn').onclick=async()=>{
+  if(!state.current) return toast('ยังไม่มีผลให้คัดลอก');
+  try{await navigator.clipboard.writeText(resultText());toast('คัดลอกแล้ว')}catch{toast('คัดลอกไม่ได้ในเบราว์เซอร์นี้')}
+};
+$('rerollRules').onclick=()=>{
+  if(!state.current) return toast('สุ่มทีมก่อน');
+  state.current.rules=pickRules(state.ruleCount); persist(); render();
+};
+$('result').addEventListener('click',e=>{
+  const l=e.target.closest('.lock'); if(l){const i=+l.dataset.i;state.locks[i]=!state.locks[i];persist();render();return}
+  const r=e.target.closest('.rr'); if(r){const i=+r.dataset.i; if(state.locks[i]) return toast('ปลดล็อคก่อนจึงจะสุ่มใหม่ได้'); rerollField(i,r.dataset.f)}
+});
+$('hist').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const h=history.find(x=>x.id===b.dataset.id); if(!h) return;
+  if(b.dataset.act==='del'){history=history.filter(x=>x!==h);save(K.hist,history);renderHistory()}
+  if(b.dataset.act==='restore'){
+    state.count=h.players.length>=5?5:4;
+    h.players.forEach((p,i)=>state.names[i]=p.name);
+    state.current={players:h.players.map(p=>({...p})),rules:[...(h.rules||[])]};
+    state.locks=[false,false,false,false,false];
+    persist();renderNames();render();window.scrollTo({top:0,behavior:'smooth'});toast('นำผลกลับมาแล้ว');
+  }
+});
+$('clearHist').onclick=()=>{ if(history.length&&confirm('ลบประวัติทั้งหมด? (กู้คืนไม่ได้ ถ้าไม่ได้ Export ไว้)')){history=[];save(K.hist,history);renderHistory()} };
+$('exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify({app:'7dtd-randomizer',v:1,exportedAt:new Date().toISOString(),state,history,lists},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='7dtd-randomizer-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const d=JSON.parse(await f.text());
+    if(d.app!=='7dtd-randomizer') throw 0;
+    if(Array.isArray(d.history)){ // รวมประวัติ ไม่ซ้ำ id
+      const ids=new Set(history.map(h=>h.id));
+      history=[...history,...d.history.filter(h=>h&&h.id&&Array.isArray(h.players)&&!ids.has(h.id))].sort((a,b)=>b.t-a.t).slice(0,200);
+      save(K.hist,history);
+    }
+    if(d.lists&&confirm('ไฟล์นี้มีรายการอาวุธ/หน้าที่/กติกาที่กำหนดเอง — ใช้แทนรายการปัจจุบันหรือไม่?')){
+      lists=Object.assign(structuredClone(DEFAULT_LISTS),d.lists);save(K.lists,lists);
+    }
+    render();toast('นำเข้าสำเร็จ');
+  }catch{toast('ไฟล์ไม่ถูกต้อง')}
+  e.target.value='';
+};
+
+/* ---------- แก้รายการ ---------- */
+function openEditor(){
+  const box=$('ed'); const f=(id,label,val)=>`<div><label for="${id}">${label}</label><textarea id="${id}">${esc(val)}</textarea></div>`;
+  box.innerHTML=ATTR_KEYS.map(k=>f('w_'+k,'อาวุธสาย '+ATTRS[k].en,(lists.weapons[k]||[]).join('\n'))).join('')
+    +f('e_roles','หน้าที่ในบ้าน',lists.roles.join('\n'))
+    +f('e_rules','กติกา (หัวข้อ — คำอธิบาย)',lists.rules.join('\n'));
+  $('dlg').showModal();
+}
+const lines=v=>v.split('\n').map(s=>s.trim()).filter(Boolean);
+$('settingsBtn').onclick=openEditor;
+$('cancelLists').onclick=()=>$('dlg').close();
+$('saveLists').onclick=()=>{
+  const nl={weapons:{}, roles:lines($('e_roles').value), rules:lines($('e_rules').value)};
+  ATTR_KEYS.forEach(k=>nl.weapons[k]=lines($('w_'+k).value));
+  if(nl.roles.length<5) return toast('หน้าที่ต้องมีอย่างน้อย 5 รายการ');
+  if(ATTR_KEYS.some(k=>!nl.weapons[k].length)) return toast('ทุกสายต้องมีอาวุธอย่างน้อย 1 อย่าง');
+  lists=nl;save(K.lists,lists);$('dlg').close();toast('บันทึกรายการแล้ว');
+};
+$('resetLists').onclick=()=>{ if(confirm('คืนค่ารายการเริ่มต้น?')){lists=structuredClone(DEFAULT_LISTS);save(K.lists,lists);$('dlg').close();toast('คืนค่าแล้ว')} };
+
+/* ---------- init ---------- */
+renderNames(); render();
+})();
+</script>
+</body>
+</html>
